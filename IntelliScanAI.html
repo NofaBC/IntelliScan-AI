@@ -1,0 +1,115 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IntelliScan AI™ – AI Opportunity Scanner</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      padding: 40px;
+    }
+    .container {
+      max-width: 700px;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin: auto;
+    }
+    h1 {
+      color: #004aad;
+      margin-bottom: 20px;
+    }
+    input, button, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      background-color: #004aad;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00327a;
+    }
+    pre {
+      background: #eef2f5;
+      padding: 15px;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🔍 IntelliScan AI™</h1>
+  <p>Enter your business website to discover which AI tools can optimize your workflow:</p>
+
+  <input type="text" id="urlInput" placeholder="e.g. https://www.examplebusiness.com" />
+  <button onclick="scanWebsite()">Scan Website</button>
+
+  <div id="result"><p>Report will appear here...</p></div>
+</div>
+
+<script>
+  const API_KEY = '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'; // Replace with your OpenRouter API key
+  const ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
+
+  async function scanWebsite() {
+    const url = document.getElementById('urlInput').value.trim();
+    const resultDiv = document.getElementById('result');
+
+    if (!url || !url.startsWith('http')) {
+      alert('Please enter a valid website URL.');
+      return;
+    }
+
+    resultDiv.innerHTML = '<p>🔄 Analyzing website, please wait...</p>';
+
+    const prompt = `
+You are an AI business automation expert.
+
+Analyze this website: ${url}
+
+Give me:
+1. Detected industry or business type
+2. Missing automations
+3. Recommended AI tools (use IntelliScan AI™ suite: Smart Funnel, BotLight AI™, AutoLetter AI™, etc.)
+4. Projected time-saving and revenue impact
+
+Respond in structured bullet format.
+`;
+
+    try {
+      const response = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + API_KEY
+        },
+        body: JSON.stringify({
+          model: 'gpt-4',
+          messages: [
+            { role: 'user', content: prompt }
+          ]
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to retrieve data.');
+
+      const data = await response.json();
+      const reply = data.choices?.[0]?.message?.content || 'No response received.';
+
+      resultDiv.innerHTML = `<h2>📊 AI Opportunity Report</h2><pre>${reply}</pre>`;
+    } catch (err) {
+      resultDiv.innerHTML = `<p style="color:red;">❌ Error: ${err.message}</p>`;
+    }
+  }
+</script>
+
+</body>
+</html>
