@@ -1,23 +1,48 @@
-# IntelliScan AI™ – Website AI Opportunity Scanner
+# 🔍 IntelliScan AI™
 
-🔍 **IntelliScan AI™** is a lightweight AI-powered web tool that analyzes any business website and recommends personalized AI automation tools to reduce workload and boost revenue.
+**AI Opportunity Scanner for Business Websites**
 
-## 🌟 Features
+IntelliScan AI™ helps businesses discover which AI tools can optimize their workflow based on a real-time website scan. 
 
-- 🌐 Website URL input
-- 🧠 AI-powered site analysis via [OpenRouter.ai](https://openrouter.ai/)
-- 📊 Smart AI Opportunity Report
-- 📥 One-click PDF report download
-- 💡 Tailored tool suggestions (e.g. Smart Funnel™, BotLight AI™, VisionWing™)
+## 🌐 Live Demo
 
-## 🚀 Live Demo
-
-> **Coming soon...** Or open `IntelliScanAI_withPDF.html` locally in any browser.
+Try it here 👉 [https://intelli-scan-ai.vercel.app](https://intelli-scan-ai.vercel.app)
 
 ---
 
-## 📂 Project Structure
+## 🧠 Features
 
-```bash
-├── IntelliScanAI_withPDF.html  # Main HTML file (fully self-contained)
-└── README.md                   # You're here!
+- Detects industry based on website content
+- Identifies missing automations
+- Recommends AI tools (Smart Funnel™, BotLight AI™, AutoLetter AI™, etc.)
+- Projects potential time savings and revenue boost
+
+---
+
+## ⚙️ Tech Stack
+
+- HTML, CSS, JavaScript
+- OpenRouter.ai API (using GPT-4 or GPT-4o)
+- Hosted on Vercel
+
+---
+
+## 🚨 Important Note
+
+To use the app:
+- Create a `.env` file for your **OpenRouter API key**, or 
+- Securely store your key using Vercel's **Environment Variables**
+
+DO NOT expose API keys in frontend code.
+
+---
+
+## 💡 Inspiration
+
+This tool was built by [Farhad Nasserghodsi](https://www.linkedin.com/in/farhadnasserghodsi), as part of his mission to bring real-world AI value to small businesses.
+
+---
+
+## 📄 License
+
+MIT – Free for personal and commercial use. Please credit the original author if reusing.
