@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -56,8 +57,7 @@
 </div>
 
 <script>
-  const API_KEY = ''; // Replace with your OpenRouter API key
-  const ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
+  const ENDPOINT = '/api/scan'; // Serverless function endpoint
 
   async function scanWebsite() {
     const url = document.getElementById('urlInput').value.trim();
@@ -70,39 +70,17 @@
 
     resultDiv.innerHTML = '<p>🔄 Analyzing website, please wait...</p>';
 
-    const prompt = `
-You are an AI business automation expert.
-
-Analyze this website: ${url}
-
-Give me:
-1. Detected industry or business type
-2. Missing automations
-3. Recommended AI tools (use IntelliScan AI™ suite: Smart Funnel, BotLight AI™, AutoLetter AI™, etc.)
-4. Projected time-saving and revenue impact
-
-Respond in structured bullet format.
-`;
-
     try {
       const response = await fetch(ENDPOINT, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + API_KEY
-        },
-        body: JSON.stringify({
-          model: 'gpt-4',
-          messages: [
-            { role: 'user', content: prompt }
-          ]
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
       });
 
       if (!response.ok) throw new Error('Failed to retrieve data.');
 
       const data = await response.json();
-      const reply = data.choices?.[0]?.message?.content || 'No response received.';
+      const reply = data.report || 'No report received.';
 
       resultDiv.innerHTML = `<h2>📊 AI Opportunity Report</h2><pre>${reply}</pre>`;
     } catch (err) {
