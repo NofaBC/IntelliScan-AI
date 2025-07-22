@@ -1,0 +1,78 @@
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IntelliScan AI™</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 90%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 30px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔍 IntelliScan AI™</h2>
+    <p>Enter your business website to discover which AI tools can optimize your workflow</p>
+    <input type="text" id="website" placeholder="e.g. https://example.com" />
+    <br />
+    <button onclick="scan()">Scan Website</button>
+    <div id="result">Report will appear here...</div>
+  </div>
+
+  <script>
+    async function scan() {
+      const url = document.getElementById('website').value;
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerText = 'Scanning...';
+
+      try {
+        const response = await fetch('/api/scan.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ website: url }),
+        });
+        const data = await response.json();
+        resultDiv.innerText = data.message || JSON.stringify(data);
+      } catch (error) {
+        resultDiv.innerText = 'Error: ' + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
