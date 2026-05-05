@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { doc, getDoc, collection, query, where, orderBy, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { Website, ScanReport } from "@/types";
 import { getPlanLimits } from "@/lib/plans";
@@ -21,14 +21,14 @@ export default function WebsiteDetailPage() {
   useEffect(() => {
     if (!user || !id) return;
     async function load() {
-      const siteDoc = await getDoc(doc(db, "websites", id));
+      const siteDoc = await getDoc(doc(getFirebaseDb(), "websites", id));
       if (siteDoc.exists()) {
         setWebsite({ id: siteDoc.id, ...siteDoc.data() } as Website);
       }
 
       const reportsSnap = await getDocs(
         query(
-          collection(db, "reports"),
+          collection(getFirebaseDb(), "reports"),
           where("websiteId", "==", id),
           where("userId", "==", user!.uid),
           orderBy("scanDate", "desc")

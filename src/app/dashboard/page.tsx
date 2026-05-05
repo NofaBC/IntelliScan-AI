@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { Website, ScanReport } from "@/types";
 import { PLANS } from "@/lib/plans";
@@ -19,14 +19,14 @@ export default function DashboardPage() {
     async function fetchData() {
       try {
         const sitesSnap = await getDocs(
-          query(collection(db, "websites"), where("userId", "==", user!.uid), orderBy("createdAt", "desc"))
+          query(collection(getFirebaseDb(), "websites"), where("userId", "==", user!.uid), orderBy("createdAt", "desc"))
         );
         const sites = sitesSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Website));
         setWebsites(sites);
 
         const reportsSnap = await getDocs(
           query(
-            collection(db, "reports"),
+            collection(getFirebaseDb(), "reports"),
             where("userId", "==", user!.uid),
             orderBy("scanDate", "desc"),
             limit(5)

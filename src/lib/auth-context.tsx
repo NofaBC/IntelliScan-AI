@@ -10,7 +10,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "./firebase";
+import { getFirebaseAuth, getFirebaseDb } from "./firebase";
 import { UserProfile, PlanTier } from "@/types";
 
 interface AuthContextType {
@@ -31,10 +31,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
-        const profileDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+        const profileDoc = await getDoc(doc(getFirebaseDb(), "users", firebaseUser.uid));
         if (profileDoc.exists()) {
           const data = profileDoc.data();
           setProfile({
@@ -55,11 +55,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    const cred = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
     await updateProfile(cred.user, { displayName: name });
     const now = new Date();
     const userProfile: Omit<UserProfile, "uid"> = {
@@ -69,12 +69,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       createdAt: now,
       updatedAt: now,
     };
-    await setDoc(doc(db, "users", cred.user.uid), userProfile);
+    await setDoc(doc(getFirebaseDb(), "users", cred.user.uid), userProfile);
     setProfile({ uid: cred.user.uid, ...userProfile });
   };
 
   const signOut = async () => {
-    await firebaseSignOut(auth);
+    await firebaseSignOut(getFirebaseAuth());
     setProfile(null);
   };
 

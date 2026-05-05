@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { ScanReport } from "@/types";
 import { getPlanLimits } from "@/lib/plans";
@@ -19,7 +19,7 @@ export default function ReportDetailPage() {
   useEffect(() => {
     if (!user || !id) return;
     async function load() {
-      const snap = await getDoc(doc(db, "reports", id));
+      const snap = await getDoc(doc(getFirebaseDb(), "reports", id));
       if (snap.exists()) {
         const data = snap.data();
         setReport({

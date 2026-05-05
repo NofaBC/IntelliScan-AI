@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { Website } from "@/types";
 import { PLANS } from "@/lib/plans";
@@ -17,7 +17,7 @@ export default function WebsitesPage() {
     if (!user) return;
     async function load() {
       const snap = await getDocs(
-        query(collection(db, "websites"), where("userId", "==", user!.uid), orderBy("createdAt", "desc"))
+        query(collection(getFirebaseDb(), "websites"), where("userId", "==", user!.uid), orderBy("createdAt", "desc"))
       );
       setWebsites(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Website)));
       setLoading(false);

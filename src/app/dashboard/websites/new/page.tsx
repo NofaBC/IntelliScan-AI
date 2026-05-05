@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { PLANS } from "@/lib/plans";
 import { getNextScanDate } from "@/lib/plans";
@@ -38,7 +38,7 @@ export default function NewWebsitePage() {
     setLoading(true);
     try {
       const now = new Date();
-      const docRef = await addDoc(collection(db, "websites"), {
+      const docRef = await addDoc(collection(getFirebaseDb(), "websites"), {
         userId: user!.uid,
         url: normalizedUrl,
         name: name.trim() || new URL(normalizedUrl).hostname,

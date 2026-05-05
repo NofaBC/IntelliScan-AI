@@ -32,16 +32,3 @@ export function getFirebaseDb(): Firestore {
   return _db;
 }
 
-// These re-exports are convenience aliases used by client components.
-// They are lazily initialized so they won't throw during SSR/build.
-export const auth = new Proxy({} as Auth, {
-  get(_, prop) {
-    return (getFirebaseAuth() as any)[prop]; // eslint-disable-line @typescript-eslint/no-explicit-any
-  },
-});
-
-export const db = new Proxy({} as Firestore, {
-  get(_, prop) {
-    return (getFirebaseDb() as any)[prop]; // eslint-disable-line @typescript-eslint/no-explicit-any
-  },
-});
