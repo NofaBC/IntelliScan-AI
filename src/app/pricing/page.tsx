@@ -1,9 +1,58 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PLANS, PUBLIC_PLANS } from "@/lib/plans";
+import { useAuth } from "@/lib/auth-context";
+import { PlanTier } from "@/types";
 
 export default function PricingPage() {
+  const { user, profile, getIdToken } = useAuth();
+  const router = useRouter();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleSubscribe = async (planId: PlanTier) => {
+    if (!user) {
+      router.push("/signup");
+      return;
+    }
+
+    const plan = PLANS[planId];
+    if (!plan.stripePriceId) {
+      alert("This plan is not available for purchase yet.");
+      return;
+    }
+
+    // If already on this plan, go to portal
+    if (profile?.plan === planId) {
+      return;
+    }
+
+    setLoadingPlan(planId);
+    try {
+      const token = await getIdToken();
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ priceId: plan.stripePriceId }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || "Failed to start checkout");
+      }
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-16">
       <div className="text-center mb-12">
@@ -20,6 +69,8 @@ export default function PricingPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {PUBLIC_PLANS.map((planId) => {
           const plan = PLANS[planId];
+          const isCurrentPlan = profile?.plan === planId;
+          const isLoading = loadingPlan === planId;
           return (
             <div
               key={plan.id}
@@ -54,16 +105,23 @@ export default function PricingPage() {
                 ))}
               </ul>
 
-              <Link
-                href="/signup"
+              <button
+                onClick={() => handleSubscribe(planId)}
+                disabled={isCurrentPlan || isLoading}
                 className={`w-full text-center py-3 px-6 rounded-lg font-semibold transition-colors ${
-                  plan.highlighted
+                  isCurrentPlan
+                    ? "bg-green-100 text-green-700 cursor-default"
+                    : plan.highlighted
                     ? "bg-brand-500 text-white hover:bg-brand-600"
                     : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                }`}
+                } disabled:opacity-70`}
               >
-                {plan.cta}
-              </Link>
+                {isCurrentPlan
+                  ? "Current Plan"
+                  : isLoading
+                  ? "Redirecting..."
+                  : plan.cta}
+              </button>
             </div>
           );
         })}
@@ -79,9 +137,11 @@ export default function PricingPage() {
           websites or need faster scan frequencies. All plans include the
           &quot;Build This for Me&quot; option to connect with NOFA AI Factory™.
         </p>
-        <Link href="/signup" className="btn-primary inline-block mt-6">
-          Start Free Trial
-        </Link>
+        {!user && (
+          <Link href="/signup" className="btn-primary inline-block mt-6">
+            Start Free Trial
+          </Link>
+        )}
       </div>
     </div>
   );

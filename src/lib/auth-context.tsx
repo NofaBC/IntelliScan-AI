@@ -42,6 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email: data.email,
             displayName: data.displayName,
             plan: data.plan as PlanTier,
+            stripeCustomerId: data.stripeCustomerId || undefined,
+            stripeSubscriptionId: data.stripeSubscriptionId || undefined,
             createdAt: data.createdAt?.toDate?.() || new Date(),
             updatedAt: data.updatedAt?.toDate?.() || new Date(),
           });

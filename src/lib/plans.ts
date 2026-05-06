@@ -22,6 +22,7 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     tagline: "For solo business owners",
     websiteLimit: 1,
     scanFrequency: "monthly",
+    stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER,
     features: [
       "1 website",
       "Monthly automated scan",
@@ -40,6 +41,7 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     websiteLimit: 3,
     scanFrequency: "biweekly",
     highlighted: true,
+    stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO,
     features: [
       "Up to 3 websites",
       "Bi-weekly automated scans",
@@ -59,6 +61,7 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     tagline: "For consultants & agencies",
     websiteLimit: 30,
     scanFrequency: "weekly",
+    stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_AGENCY,
     features: [
       "Up to 30 websites",
       "Weekly automated scans",

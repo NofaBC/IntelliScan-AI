@@ -7,6 +7,8 @@ export interface UserProfile {
   email: string;
   displayName: string;
   plan: PlanTier;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -61,4 +63,5 @@ export interface PlanConfig {
   features: string[];
   highlighted?: boolean;
   cta: string;
+  stripePriceId?: string;
 }

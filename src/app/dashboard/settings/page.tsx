@@ -1,13 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { PLANS } from "@/lib/plans";
 
 export default function SettingsPage() {
-  const { user, profile } = useAuth();
+  const { user, profile, getIdToken } = useAuth();
+  const [portalLoading, setPortalLoading] = useState(false);
   const plan = profile?.plan || "free";
   const planConfig = PLANS[plan];
+  const hasSubscription = !!profile?.stripeCustomerId;
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -60,13 +63,37 @@ export default function SettingsPage() {
           </ul>
         </div>
 
-        {plan !== "agency" && (
-          <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="mt-4 pt-4 border-t border-gray-100 flex gap-3">
+          {plan !== "agency" && (
             <Link href="/pricing" className="btn-primary text-sm !py-2">
               Upgrade Plan
             </Link>
-          </div>
-        )}
+          )}
+          {hasSubscription && (
+            <button
+              onClick={async () => {
+                setPortalLoading(true);
+                try {
+                  const token = await getIdToken();
+                  const res = await fetch("/api/stripe/portal", {
+                    method: "POST",
+                    headers: { Authorization: `Bearer ${token}` },
+                  });
+                  const data = await res.json();
+                  if (data.url) window.location.href = data.url;
+                } catch {
+                  alert("Failed to open billing portal.");
+                } finally {
+                  setPortalLoading(false);
+                }
+              }}
+              disabled={portalLoading}
+              className="btn-secondary text-sm !py-2"
+            >
+              {portalLoading ? "Loading..." : "Manage Subscription"}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Scan Settings */}
